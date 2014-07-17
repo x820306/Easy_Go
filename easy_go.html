@@ -29,7 +29,8 @@
         終點：<br><br>
         <input type="text" id="end">
         <a href="#" data-role="button" id="d2" data-inline="true">現在位置</a>
-        <a href="#" data-role="button" id="b2" data-inline="true">標記終點</a>
+        <a href="#" data-role="button" id="b2" data-inline="true">標記終點</a><br><br>
+        <a href="#" data-role="button" id="r1">路徑規劃</a>
 	</div>
     <div role="main" class="ui-content" id="map-canvas">
     </div>
@@ -41,13 +42,24 @@
 <script>
 var geocoder;
 var map;
+var directionsService;
+var directionsDisplay;
 
 
 $( document ).on( "pageinit", "#map-page", function() {
     var defaultLatLng = new google.maps.LatLng(25.047968, 121.517081); 
 	geocoder = new google.maps.Geocoder();
+	directionsService = new google.maps.DirectionsService();
+	 
+	var rendererOptions = {
+                suppressMarkers: true
+        };
+ 
+    directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
     
     drawMap(defaultLatLng); 
+	
+	directionsDisplay.setMap(map);
 });
 
 function drawMap(latlng) {
@@ -81,7 +93,7 @@ $("#d1").on( "click",function() {
     } else {
         alert("瀏覽器不支援或未開啟定位功能")
     }
-        });
+});
 		
 $("#d2").on( "click",function() {
 	  if ( navigator.geolocation ) {
@@ -105,7 +117,7 @@ $("#d2").on( "click",function() {
     } else {
         alert("瀏覽器不支援或未開啟定位功能")
     }          
-        });
+});
 		
 $("#b1").on( "click",function() {
    var address = $("#start").val();
@@ -120,7 +132,7 @@ $("#b1").on( "click",function() {
         alert("Geocode was not successful for the following reason: " + status);
       }
     });
-        });
+});
 		
 $("#b2").on( "click",function() {
    var address = $("#end").val();
@@ -135,7 +147,22 @@ $("#b2").on( "click",function() {
         alert("Geocode was not successful for the following reason: " + status);
       }
     });
+});
+		
+$("#r1").on( "click",function() {
+        var request = {
+                origin: $("#start").val(),
+                destination: $("#end").val(),
+                travelMode: google.maps.TravelMode.WALKING
+        };
+		
+		directionsService.route(request, function(response, status) {
+                //規畫路徑回傳結果
+                if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(response);
+                }
         });
+});
 		
 </script>
 

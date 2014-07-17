@@ -117,15 +117,17 @@ $("#b1").on( "click",function() {
    var address = $("#start").val();
     geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        //map.setCenter(results[0].geometry.location);
+        map.setCenter(results[0].geometry.location);
         if(marker_s!=null)
 		{
 			marker_s.setMap(null);
+			google.maps.event.trigger(map, "resize");
 		}
 		marker_s = new google.maps.Marker({
             map: map,
             position: results[0].geometry.location
         });
+		
       } else {
         alert("Geocode was not successful for the following reason: " + status);
       }
@@ -136,10 +138,11 @@ $("#b2").on( "click",function() {
    var address = $("#end").val();
     geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        //map.setCenter(results[0].geometry.location);
+        map.setCenter(results[0].geometry.location);
 		if(marker_e!=null)
 		{
 			marker_e.setMap(null);
+			google.maps.event.trigger(map,"resize");
 		}
         marker_e = new google.maps.Marker({
             map: map,
@@ -164,13 +167,22 @@ $("#r1").on( "click",function() {
 						if(directionsDisplay!=null)
 						{
 							directionsDisplay.setMap(null);
+							google.maps.event.trigger(map,"resize");
 						}
 						
-						var rendererOptions = {
-                            suppressMarkers: true
-        				};
- 
-    					directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+						if(marker_s!=null)
+						{
+							marker_s.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						
+						if(marker_e!=null)
+						{
+							marker_e.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+	
+    					directionsDisplay = new google.maps.DirectionsRenderer();
 						
 						directionsDisplay.setMap(map);
 						

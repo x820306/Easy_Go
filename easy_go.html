@@ -44,22 +44,16 @@ var geocoder;
 var map;
 var directionsService;
 var directionsDisplay;
+var marker_s;
+var marker_e;
 
 
 $( document ).on( "pageinit", "#map-page", function() {
     var defaultLatLng = new google.maps.LatLng(25.047968, 121.517081); 
 	geocoder = new google.maps.Geocoder();
 	directionsService = new google.maps.DirectionsService();
-	 
-	var rendererOptions = {
-                suppressMarkers: true
-        };
- 
-    directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
     
     drawMap(defaultLatLng); 
-	
-	directionsDisplay.setMap(map);
 });
 
 function drawMap(latlng) {
@@ -124,7 +118,11 @@ $("#b1").on( "click",function() {
     geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         //map.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
+        if(marker_s!=null)
+		{
+			marker_s.setMap(null);
+		}
+		marker_s = new google.maps.Marker({
             map: map,
             position: results[0].geometry.location
         });
@@ -139,7 +137,11 @@ $("#b2").on( "click",function() {
     geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         //map.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
+		if(marker_e!=null)
+		{
+			marker_e.setMap(null);
+		}
+        marker_e = new google.maps.Marker({
             map: map,
             position: results[0].geometry.location
         });
@@ -159,6 +161,19 @@ $("#r1").on( "click",function() {
 		directionsService.route(request, function(response, status) {
                 //規畫路徑回傳結果
                 if (status == google.maps.DirectionsStatus.OK) {
+						if(directionsDisplay!=null)
+						{
+							directionsDisplay.setMap(null);
+						}
+						
+						var rendererOptions = {
+                            suppressMarkers: true
+        				};
+ 
+    					directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+						
+						directionsDisplay.setMap(map);
+						
                         directionsDisplay.setDirections(response);
                 }
         });

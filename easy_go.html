@@ -33,7 +33,7 @@
         路點關鍵字搜尋：<br><br>
         <input type="search" name="keyword" id="key"><br><br>
         路點類型：<br><br>
-        <select name="category" id="cate">
+        <select name="category" id="cate" data-native-menu="false">
       			<option value="all">全部</option>
                 <option value="Local business">地方商務</option>
       			<option value="Restaurant/cafe">餐廳/Cafe</option>
@@ -65,7 +65,6 @@
         <a href="#" data-role="button" id="rwp">列出路點</a><br>
         <div id="selectList">
         </div>
-        <a href="#" data-role="button" id="r1">路徑規劃</a>
 	</div>
     <div role="main" class="ui-content" id="map-canvas">
     </div>
@@ -91,16 +90,6 @@ $( document ).on( "pageinit", "#map-page", function() {
 	directionsService = new google.maps.DirectionsService();
     
     drawMap(defaultLatLng); 
-});
-
-function drawMap(latlng) {
-        var myOptions = {
-            zoom: 15,
-            center: latlng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-       map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
-    }
 
 $("#d1").on( "click",function() {
     if ( navigator.geolocation ) {
@@ -193,42 +182,6 @@ $("#b2").on( "click",function() {
     });
 });
 		
-$("#r1").on( "click",function() {
-        var request = {
-                origin: $("#start").val(),
-                destination: $("#end").val(),
-                travelMode: google.maps.TravelMode.WALKING
-        };
-		
-		directionsService.route(request, function(response, status) {
-                //規畫路徑回傳結果
-                if (status == google.maps.DirectionsStatus.OK) {
-						if(directionsDisplay!=null)
-						{
-							directionsDisplay.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
-						
-						if(marker_s!=null)
-						{
-							marker_s.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
-						
-						if(marker_e!=null)
-						{
-							marker_e.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
-	
-    					directionsDisplay = new google.maps.DirectionsRenderer();
-						
-						directionsDisplay.setMap(map);
-						
-                        directionsDisplay.setDirections(response);
-                }
-        });
-});
 
 $("#rwp").on( "click",function() {
 	
@@ -267,7 +220,7 @@ $("#rwp").on( "click",function() {
 									 
 									 var step3=google.maps.geometry.spherical.computeDistanceBetween(sp,ep)/1000/2;
 									 if(step3<1){step3=1;}
-								   alert(step3);
+								   
 								   
 								   center=lt+','+lg; 
 								   rad=step3;
@@ -322,8 +275,94 @@ $("#rwp").on( "click",function() {
 							                    $("#wpse").append('<option value="'+localLat[i]+','+localLng[i]+'">'+localName[i]+'&nbsp;&nbsp;&nbsp;&nbsp;人氣度:'+check[i]+'</option>');												
 											  }
 											  
+											  $("#selectList").append('<a href="#" data-role="button" id="r1">路徑規劃</a>');
+											  
 											  //$("#wpse").trigger("create");
 											  $("#selectList").trigger("create");
+											  
+											  
+											  $("#wpse").change(function () {
+                                                var st=$(this).find("option:selected");
+												if (st.length>5) {
+													$(this).selectmenu('close');
+													$(this).selectmenu('disable');
+                                                } 
+                                              });
+											  
+$("#r1").on( "click",function() {
+      
+	   var wayPnts=$("#wpse").val()||[];
+	   var wptSend=[];
+	   var request;
+	   
+	   if(wayPnts.length==0){
+	    request = {
+                origin: $("#start").val(),
+                destination: $("#end").val(),
+				optimizeWaypoints: true,
+                travelMode: google.maps.TravelMode.WALKING
+        };
+		
+	   }else if(wayPnts.length>0){
+		   for(i=0;i<wayPnts.length;i++)
+		   {
+			   var xx;
+			   var aa;
+			   var bb;
+			   var cc;
+			   
+			   xx=wayPnts[i].split(",");
+			   aa=xx[0];
+			   bb=xx[1];
+			   
+			   cc=new google.maps.LatLng(aa,bb); 
+			   
+			   wptSend.push({
+          		location:cc,
+          		stopover:true});
+		   }
+		   
+		    request = {
+                origin: $("#start").val(),
+                destination: $("#end").val(),
+				waypoints: wptSend,
+				optimizeWaypoints: true,
+                travelMode: google.maps.TravelMode.WALKING
+            };
+		   
+		}
+		
+		directionsService.route(request, function(response, status) {
+                //規畫路徑回傳結果
+                if (status == google.maps.DirectionsStatus.OK) {
+						if(directionsDisplay!=null)
+						{
+							directionsDisplay.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						
+						if(marker_s!=null)
+						{
+							marker_s.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						
+						if(marker_e!=null)
+						{
+							marker_e.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+	
+    					directionsDisplay = new google.maps.DirectionsRenderer();
+						
+						directionsDisplay.setMap(map);
+						
+                        directionsDisplay.setDirections(response);
+                }
+        });
+});
+											  
+											  
 											}
 											
 											
@@ -343,6 +382,23 @@ $("#rwp").on( "click",function() {
 			}
 
 });
+
+
+
+
+
+});
+
+function drawMap(latlng) {
+        var myOptions = {
+            zoom: 15,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+       map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+    }
+
+
 
 </script>
 

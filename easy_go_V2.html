@@ -50,6 +50,12 @@ max-width: 100%;
 	width:443px;
 }
 
+#popupBasic{
+    width: 80%;
+    left: 10%;
+    right: 10%
+}
+
 </style>
 </head> 
 <body> 
@@ -73,7 +79,7 @@ max-width: 100%;
 	<div data-role="content" style="height:33px;padding-top:0px;overflow:hidden;" id="hdr"> 
 		  <div  class="ui-grid-b">
             <div class="ui-block-a" style="padding-top:0px;" >
-              <a href="#popupBasic" data-rel="popup" id="m1"><img src="P2_3.png" id="menu1" width="45" height="45"></a>
+              <a href="#popupBasic" data-rel="popup" id="m1" data-position-to="window"><img src="P2_3.png" id="menu1" width="45" height="45"></a>
              
              <div style="float:right;padding-top:9px;padding-right:12px;">
 			 <a href="#" id="rdmBtn" align="right"><img src="P2_4.png" id="rdmIcon" width="35" height="29"></a>
@@ -86,9 +92,15 @@ max-width: 100%;
      			</div>
      		</div>
       		<div class="ui-block-c" id="selectList2">
+            
             <div style="float:right;padding-top:1px;">
+             
              <a href="#" id="r1"><img src="P2_2.png" id="go1" width="45" height="45"></a>
              </div>
+             
+             <div style="float:right;padding-top:10px;margin-right:3px;">
+			 <a href="#" id="crossBTN" ><img src="cross.png" id="crossIMG" width="27" height="27" ></a>
+               </div>
      		</div>
 		</div >
         
@@ -106,7 +118,7 @@ max-width: 100%;
         <a href="#" data-role="button" id="d2" data-inline="true" data-mini="true">現在位置</a>
         <a href="#" data-role="button" id="b2" data-inline="true" data-mini="true">確認終點</a><br><br>
         
-      <div data-role="collapsible" data-mini="true">
+      <div data-role="collapsible" data-mini="true" id="bigger">
    <h3>路點類型</h3>
     
 
@@ -263,69 +275,23 @@ var localLng=[];
 var addr_s;
 var addr_e;
 var markerArray=[];
+var markerArray0=[];
 var flagFinded;
+var stepDisplay;
 
 $( document ).on( "pageinit", "#page_1", function() {
 
-var logo_w=$("#lgo").css("width");
-var logo_h=$("#lgo").css("height");
-var go_w=$("#lgo_go").css("width");
-var go_h=$("#lgo_go").css("height");
-var his_w=$("#lgo_his").css("width");
-var his_h=$("#lgo_his").css("height");
-var set_w=$("#lgo_set").css("width");
-var set_h=$("#lgo_set").css("height");
-var txe0=window.innerHeight;
-var stepDisplay;
-
-var ee1=logo_w.split("p");
-logo_w=ee1[0];
-logo_w=parseInt(logo_w, 10) ;
-var ee2=logo_h.split("p");
-logo_h=ee2[0];
-logo_h=parseInt(logo_h, 10) ;
-var ee3=go_w.split("p");
-go_w=ee3[0];
-go_w=parseInt(go_w, 10) ;
-var ee4=go_h.split("p");
-go_h=ee4[0];
-go_h=parseInt(go_h, 10) ;
-var ee5=his_w.split("p");
-his_w=ee5[0];
-his_w=parseInt(his_w, 10) ;
-var ee6=his_h.split("p");
-his_h=ee6[0];
-his_h=parseInt(his_h, 10);
-var ee7=set_w.split("p");
-set_w=ee7[0];
-set_w=parseInt(set_w, 10) ;
-var ee8=set_h.split("p");
-set_h=ee8[0];
-set_h=parseInt(set_h, 10);
-
-var sum=logo_h+go_h+his_h+go_h+160;
-var per=txe0/sum;
-logo_w=logo_w*per;
-logo_h=logo_h*per;
-go_w=go_w*per;
-go_h=go_h*per;
-his_w=his_w*per;
-his_h=his_h*per;
-set_w=set_w*per;
-set_h=set_h*per;
-
-
-
-$("#lgo").css({"width":logo_w+"px"});
-$("#lgo").css({"height":logo_h+"px"});
-$("#lgo_go").css({"width":go_w+"px"});
-$("#lgo_go").css({"height":go_h+"px"});
-$("#lgo_his").css({"width":his_w+"px"});
-$("#lgo_his").css({"height":his_h+"px"});
-$("#lgo_set").css({"width":set_w+"px"});
-$("#lgo_set").css({"height":set_h+"px"});
+p1_resize();
 
 });
+
+$(window).resize(function() {
+  p1_resize();
+  var txe=window.innerHeight-98;
+  $("#map-canvas").css({"height":txe+"px"});
+
+});
+
 
 
 $( document ).on( "pageinit", "#map-page", function() {
@@ -345,8 +311,52 @@ $( document ).on( "pageinit", "#map-page", function() {
 	stepDisplay = new google.maps.InfoWindow();
 	
 	
+$("#bigger").on( "collapsibleexpand",function() {
+	
+	var offst = $("#popupBasic").offset();
+	
+	$("#popupBasic-screen").height(offst.top+ $("#popupBasic").outerHeight());
 	
 	
+});
+
+$("#bigger").on( "collapsiblecollapse",function() {
+	
+	
+	$("#popupBasic-screen").height(window.innerHeight);
+	
+	
+});
+
+
+$("#popupBasic").on( "popupafteropen",function() {
+	
+	if($("#popupBasic").outerHeight()>window.innerHeight){
+	
+	var offst = $("#popupBasic").offset();
+	
+	$("#popupBasic-screen").height(offst.top+ $("#popupBasic").outerHeight());
+	
+	}
+	
+	//$('ul.load_details').css({visibility,"visible"});
+$("#map-canvas").css({visibility:"hidden"});
+$("#hdr").css({visibility:"hidden"});
+$("#ftr").css({visibility:"hidden"});
+	
+	
+});
+
+$("#popupBasic").on( "popupafterclose",function() {
+	
+$("#map-canvas").css({visibility:"visible"});
+$("#hdr").css({visibility:"visible"});
+$("#ftr").css({visibility:"visible"});
+	
+	
+});
+
+
 
 $("#d1").on( "click",function() {
     if ( navigator.geolocation ) {
@@ -396,242 +406,13 @@ $("#d2").on( "click",function() {
     }          
 });
 		
-$("#b1").on( "click",function() {
-   var address = $("#start").val();
-   addr_s=address;
-    geocoder.geocode( { 'address': address}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        map.setCenter(results[0].geometry.location);
-        if(marker_s!=null)
-		{
-			marker_s.setMap(null);
-			google.maps.event.trigger(map, "resize");
-		}
-		marker_s = new google.maps.Marker({
-            map: map,
-            position: results[0].geometry.location
-        });
-		sp=results[0].geometry.location;
-		
-		$("#selectList0").html('');
-		$("#wpse").off();
-        $("#wpse").html('<option>請先搜尋路點</option>');
-		$("#wpse").selectmenu('refresh');
-		$("#wpse").selectmenu('disable');
-		$("#r1").off();
-		$("#rdmBtn").off();
-		
-						$("#run").addClass('ui-disabled');
-		 				$("#ftrr").html(""); 
-						$('#ftrl').html("");
-		 				tctr=0;
-		                s_flag=0;
-						clearInterval(timeoutId);
-			            clearInterval(timeoutId2);
-			            if(marker_rt!=null)
-					    {
-							marker_rt.setMap(null);
-							google.maps.event.trigger(map, "resize");
-						}
-			            $("#run").html('START');
-						
-						$("#run").off();
-						if(directionsDisplay!=null)
-						{
-							directionsDisplay.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
-						google.maps.event.clearListeners(map, "click");
-						for(p=0;p<markerArray.length;p++)
-						{
-							markerArray[p].setMap(null);
-							google.maps.event.trigger(map, "resize");
-						}
-						markerArray=[];
-		
-		
-      } else {
-        alert("Geocode was not successful for the following reason: " + status);
-      }
-    });
-});
-		
-$("#b2").on( "click",function() {
-   var address = $("#end").val();
-   addr_e=address;
-    geocoder.geocode( { 'address': address}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        map.setCenter(results[0].geometry.location);
-		if(marker_e!=null)
-		{
-			marker_e.setMap(null);
-			google.maps.event.trigger(map,"resize");
-		}
-        marker_e = new google.maps.Marker({
-            map: map,
-            position: results[0].geometry.location
-        });
-		ep=results[0].geometry.location;
-		
-		$("#selectList0").html('');
-		$("#wpse").off();
-        $("#wpse").html('<option>請先搜尋路點</option>');
-		$("#wpse").selectmenu('refresh');
-		$("#wpse").selectmenu('disable');
-		$("#r1").off();
-		$("#rdmBtn").off();
-		
-		                $("#run").addClass('ui-disabled');
-		 				$("#ftrr").html(""); 
-						$('#ftrl').html("");
-		 				tctr=0;
-		                s_flag=0;
-						clearInterval(timeoutId);
-			            clearInterval(timeoutId2);
-			            if(marker_rt!=null)
-					    {
-							marker_rt.setMap(null);
-							google.maps.event.trigger(map, "resize");
-						}
-			            $("#run").html('START');
-						
-						$("#run").off();
-						if(directionsDisplay!=null)
-						{
-							directionsDisplay.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
-						google.maps.event.clearListeners(map, "click");
-						for(p=0;p<markerArray.length;p++)
-						{
-							markerArray[p].setMap(null);
-							google.maps.event.trigger(map, "resize");
-						}
-						markerArray=[];
-		
-		
-      } else {
-        alert("Geocode was not successful for the following reason: " + status);
-      }
-    });
-});
+
 		
 
-$("#rwp").on( "click",function() {
-	
-	        if((sp!=null)&&(ep!=null)){
-                       $.ajax(
-				 			{   url: '/proxy.php',
-							    //async: false,
-				     			type: 'GET',
-	  				 			dataType: "json",
-                     
-                     			success: function(Jdata) { 
-								
-								 	var center0;
-									var rad0;
-									var catArray=[];
-									
-									if((ep.lat()==sp.lat())&&(ep.lng()==sp.lng())){
-									 
-								    center0=sp.lat()+','+sp.lng(); 
-								    rad0=3;
-								 
-								    }else{
-									
-									   var lt=(sp.lat()+ep.lat())/2;
-									   var lg=(sp.lng()+ep.lng())/2
-									 
-									   var step3=google.maps.geometry.spherical.computeDistanceBetween(sp,ep)/1000/2;
-									   if(step3<1){step3=1;}
-								    
-								       center0=lt+','+lg; 
-								       rad0=step3;
-								    }
-									
-									
-									$("input:checkbox[name=category]:checked").each(function(){
-    							             catArray.push($(this).val());
-  						            });
-									
-									var khyu=$("#key").val();
-									var tykk=Jdata.result.token;
-									
-									flagFinded=0;
-									
-									localLat=[];
-									localLng=[];
-									
-									
-									
-									$("#selectList0").html('');
-											$("#wpse").off();
-        									$("#wpse").html('');
-											$("#wpse").selectmenu('refresh');
-											$("#wpse").selectmenu('disable');
-											$("#r1").off();
-											$("#rdmBtn").off();
-											$("#run").addClass('ui-disabled');
-		 				                    $("#ftrr").html(""); 
-						                    $('#ftrl').html("");
-		 				                    tctr=0;
-		                                    s_flag=0;
-						                    clearInterval(timeoutId);
-			                                clearInterval(timeoutId2);
-			                                if(marker_rt!=null)
-					                       {
-							                   marker_rt.setMap(null);
-						                      google.maps.event.trigger(map, "resize");
-						                   }
-			                               $("#run").html('START');
-						
-						                   $("#run").off();
-										   
-										   if(directionsDisplay!=null)
-											{
-													directionsDisplay.setMap(null);
-													google.maps.event.trigger(map,"resize");
-											}
-											google.maps.event.clearListeners(map, "click");
-											for(p=0;p<markerArray.length;p++)
-											{
-													markerArray[p].setMap(null);
-													google.maps.event.trigger(map, "resize");
-											}
-											markerArray=[];
-									
-									
-									
-									
-									
-									
-									
-									if(catArray.length==0)
-									{
-										sendd(catArray,khyu,20,tykk,rad0,center0,0,1,true)
-										
-									}else if(catArray.length>0)
-									{	
-										sendd(catArray,khyu,20,tykk,rad0,center0,0,catArray.length,false)
-									}
-									
-									
-									
-										   
-											
-											
-									
-                    			 },
-                     			error: function(xhr, ajaxOptions, thrownError) {
-									alert(thrownError);
-                     			}
-                 		 });
-			}
-
-});
-
-
-
+		
+setRWP();
+setB1();
+setB2();
 
 
 });
@@ -806,14 +587,17 @@ function sendd(cgoy,ky,li,tk,rad,center,goyCtr,upL,allFlag)
 											
 											if(flagFinded==0){
 						
-											  $("#selectList0").append('沒有找到任何路點');
+											  $("#selectList0").html('沒有找到任何路點');
 											  $("#wpse").html('<option>請先搜尋路點</option>');
 											  $("#wpse").selectmenu('refresh');
+											  setRWP();
+											  setB1();
+											  setB2();
 											
 
 											}else if(flagFinded>0)
 											{
-											  $("#selectList0").append('找到'+flagFinded+'個路點');
+											  $("#selectList0").html('找到'+flagFinded+'個路點');
 											  
 											  $("#wpse").prepend('<option>請選擇最多六個路點</option>');
 											  
@@ -821,14 +605,21 @@ function sendd(cgoy,ky,li,tk,rad,center,goyCtr,upL,allFlag)
 											  
 											  $("#wpse").selectmenu('enable');
 											  
-											 	$("#wpse").on( "change",function () {
+											 	
+												
+												
+												
+												
+												$("#wpse").on( "change",function () {
 													$(this).selectmenu('refresh');
                                                 var st=$(this).find("option:selected");
 								                if (st.length>5) {
 								                 $(this).selectmenu('close');
 								                 $(this).selectmenu('disable');
                                                  } 
-                                                });						  
+                                                });	
+												
+												setRPmarkers();					  
 										  
 	
 	$("#rdmBtn").on( "click",function() {
@@ -937,18 +728,8 @@ $("#r1").on( "click",function() {
 							google.maps.event.trigger(map,"resize");
 						}
 						
-						if(marker_s!=null)
-						{
-							marker_s.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
 						
-						if(marker_e!=null)
-						{
-							marker_e.setMap(null);
-							google.maps.event.trigger(map,"resize");
-						}
-	
+	                    
     					
 						var rendererOptions = {
   							map: map,
@@ -969,11 +750,56 @@ $("#r1").on( "click",function() {
 						}
 						markerArray=[];
 						
+						invibleRPmarkers();
+						
+						
+						$("#crossBTN").on( "click",function() {
+							
+							
+							$("#run").addClass('ui-disabled');
+		 				$("#ftrr").html(""); 
+						$('#ftrl').html("");
+		 				tctr=0;
+		                s_flag=0;
+						clearInterval(timeoutId);
+			            clearInterval(timeoutId2);
+			            if(marker_rt!=null)
+					    {
+							marker_rt.setMap(null);
+							google.maps.event.trigger(map, "resize");
+						}
+			            $("#run").html('START');
+						
+						$("#run").off();
+						if(directionsDisplay!=null)
+						{
+							directionsDisplay.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						google.maps.event.clearListeners(map, "click");
+						for(p=0;p<markerArray.length;p++)
+						{
+							markerArray[p].setMap(null);
+							google.maps.event.trigger(map, "resize");
+						}
+						markerArray=[];
+											
+							
+							showRPmarkers();
+							
+							var blanker=[];
+							
+							 $('#wpse').val(blanker).selectmenu('refresh',true);
+	                         $("#wpse").selectmenu('enable');	
+							
+							$("#crossBTN").off();
+						});
+						
 						
 						var landNArray=[];
 						var landLGG=[];
 						 var icon_s="https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=star|FF0000|000000";
-						  var icon_e="https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=flag|FF0000||000000";
+						  var icon_e="https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=flag|FF0000|000000";
 						  var icon_f="https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=glyphish_walk|6aad32|000000";
 						 
 						 var marker_temp_s = new google.maps.Marker({
@@ -1094,7 +920,9 @@ $("#r1").on( "click",function() {
 		
 });
 											  
-											  
+setRWP();			
+setB1();
+setB2();							  
 }
 												
 												
@@ -1103,11 +931,450 @@ $("#r1").on( "click",function() {
 
 											},
 											error: function(xhr, ajaxOptions, thrownError) {
-									           alert(thrownError);
+									           setRWP();			
+											   setB1();
+                                               setB2();	
+											   alert(thrownError);
+											   
                      			            }
 									     });											 
 	
+
 }
+
+
+
+function p1_resize()
+{
+var logo_w=353;
+var logo_h=66;
+var go_w=431;
+var go_h=383;
+var his_w=443;
+var his_h=95;
+var set_w=443;
+var set_h=96;
+var txe0=window.innerHeight;
+
+
+var sum=logo_h+go_h+his_h+go_h+160;
+var per=txe0/sum;
+logo_w=logo_w*per;
+logo_h=logo_h*per;
+go_w=go_w*per;
+go_h=go_h*per;
+his_w=his_w*per;
+his_h=his_h*per;
+set_w=set_w*per;
+set_h=set_h*per;
+
+
+
+$("#lgo").css({"width":logo_w+"px"});
+$("#lgo").css({"height":logo_h+"px"});
+$("#lgo_go").css({"width":go_w+"px"});
+$("#lgo_go").css({"height":go_h+"px"});
+$("#lgo_his").css({"width":his_w+"px"});
+$("#lgo_his").css({"height":his_h+"px"});
+$("#lgo_set").css({"width":set_w+"px"});
+$("#lgo_set").css({"height":set_h+"px"});
+
+	
+}
+
+function setRPmarkers()
+{
+	var landNArray0=[];
+	var landLGG0=[];
+	var icon_w="https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=glyphish_compass|6aad32|000000"
+	
+	
+	$("#wpse option[value]").each(function(){
+    							landNArray0.push($(this).text());
+								landLGG0.push($(this).val());
+  						 });
+						 
+						
+						 
+						 
+						 for(k=0;k<landNArray0.length;k++)
+						 {
+							
+							
+							var xxx0=landLGG0[k].split(",");
+			                var aaa0=xxx0[0];
+			                var bbb0=xxx0[1];
+			   
+			                
+							var ccc0=new google.maps.LatLng(aaa0,bbb0); 
+							
+							
+							 var marker_temp0= new google.maps.Marker({
+                           		 position: ccc0, 
+                            	 map: map,
+								 icon: icon_w
+                         	});
+							 
+							 
+							 
+							 var hml='<p>'+landNArray0[k]+'</p><button onclick="myFunc(\''+landLGG0[k]+'\')">選擇</button>';
+							 	
+							 attachInstructionText(marker_temp0,hml);
+						
+						    
+							 markerArray0.push(marker_temp0);
+							 
+							 
+							 
+						 }
+						 
+						 
+						 
+	
+	
+	
+}
+
+
+function invibleRPmarkers()
+{
+	if(marker_s!=null)
+						{
+							marker_s.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						
+						if(marker_e!=null)
+						{
+							marker_e.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						
+	
+		for(i=0;i<markerArray0.length;i++)
+		{
+			markerArray0[i].setMap(null);
+			google.maps.event.trigger(map,"resize");
+			
+		}	
+	
+}
+
+function showRPmarkers()
+{
+	marker_s.setMap(map);
+	google.maps.event.trigger(map,"resize");
+		
+	marker_e.setMap(map);
+	google.maps.event.trigger(map,"resize");
+		
+		
+		for(i=0;i<markerArray0.length;i++)
+		{
+			markerArray0[i].setMap(map);
+			google.maps.event.trigger(map,"resize");
+		}	
+}
+
+function killRPmarkers()
+{
+		for(i=0;i<markerArray0.length;i++)
+		{
+			markerArray0[i].setMap(null);
+			google.maps.event.trigger(map,"resize");
+			
+			
+		}	
+		markerArray0=[];	
+	
+}
+
+
+function myFunc(bbbd)
+{
+   
+   
+   var kkg=$('#wpse').val()||[];
+   var flagGG=0;
+								
+   for(op=0;op<kkg.length;op++)
+   {
+	   if(kkg[op]==bbbd)
+	   {
+		  flagGG=1;
+	   }
+   }
+   
+   if((flagGG==0)&&(kkg.length<6)){
+   kkg.push(bbbd);			
+   $('#wpse').val(kkg).selectmenu('refresh',true);
+   if(kkg.length==6)
+   {
+	   $("#wpse").selectmenu('disable');
+	}	
+   }
+							
+}
+
+function setRWP()
+{
+	$("#rwp").on( "click",function() {
+	
+	        if((sp!=null)&&(ep!=null)){
+                       
+					   
+					   $("#rwp").off();
+					    $("#b1").off();
+						 $("#b2").off();
+					   
+					   
+					   $.ajax(
+				 			{   url: '/proxy.php',
+							    //async: false,
+				     			type: 'GET',
+	  				 			dataType: "json",
+                     
+                     			success: function(Jdata) { 
+								
+								 	var center0;
+									var rad0;
+									var catArray=[];
+									
+									if((ep.lat()==sp.lat())&&(ep.lng()==sp.lng())){
+									 
+								    center0=sp.lat()+','+sp.lng(); 
+								    rad0=1;
+								 
+								    }else{
+									
+									   var lt=(sp.lat()+ep.lat())/2;
+									   var lg=(sp.lng()+ep.lng())/2
+									 
+									   var step3=google.maps.geometry.spherical.computeDistanceBetween(sp,ep)/1000/2;
+									   if(step3<1){step3=1;}
+								    
+								       center0=lt+','+lg; 
+								       rad0=step3;
+								    }
+									
+									
+									$("input:checkbox[name=category]:checked").each(function(){
+    							             catArray.push($(this).val());
+  						            });
+									
+									var khyu=$("#key").val();
+									var tykk=Jdata.result.token;
+									
+									flagFinded=0;
+									
+									localLat=[];
+									localLng=[];
+									
+									
+									
+									$("#selectList0").html('載入中請耐心等候'); 
+											$("#wpse").off();
+        									$("#wpse").html('');
+											$("#crossBTN").off();
+											$("#wpse").selectmenu('refresh');
+											$("#wpse").selectmenu('disable');
+											$("#r1").off();
+											$("#rdmBtn").off();
+											$("#run").addClass('ui-disabled');
+		 				                    $("#ftrr").html(""); 
+						                    $('#ftrl').html("");
+		 				                    tctr=0;
+		                                    s_flag=0;
+						                    clearInterval(timeoutId);
+			                                clearInterval(timeoutId2);
+			                                if(marker_rt!=null)
+					                       {
+							                   marker_rt.setMap(null);
+						                      google.maps.event.trigger(map, "resize");
+						                   }
+			                               $("#run").html('START');
+						
+						                   $("#run").off();
+										   
+										   if(directionsDisplay!=null)
+											{
+													directionsDisplay.setMap(null);
+													google.maps.event.trigger(map,"resize");
+											}
+											google.maps.event.clearListeners(map, "click");
+											for(p=0;p<markerArray.length;p++)
+											{
+													markerArray[p].setMap(null);
+													google.maps.event.trigger(map, "resize");
+											}
+											markerArray=[];
+									
+									
+									        killRPmarkers();
+									
+									
+									
+									
+									if(catArray.length==0)
+									{
+										sendd(catArray,khyu,20,tykk,rad0,center0,0,1,true)
+										
+									}else if(catArray.length>0)
+									{	
+										sendd(catArray,khyu,20,tykk,rad0,center0,0,catArray.length,false)
+									}
+												
+									
+                    			 },
+                     			error: function(xhr, ajaxOptions, thrownError) {
+									alert(thrownError);
+                     			}
+                 		 });
+			}
+
+});
+	
+	
+}
+
+function setB1()
+{
+	$("#b1").on( "click",function() {
+   var address = $("#start").val();
+   addr_s=address;
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        map.setCenter(results[0].geometry.location);
+        if(marker_s!=null)
+		{
+			marker_s.setMap(null);
+			google.maps.event.trigger(map, "resize");
+		}
+		marker_s = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+		sp=results[0].geometry.location;
+		
+		$("#selectList0").html('');
+		$("#wpse").off();
+		$("#crossBTN").off();
+		
+        $("#wpse").html('<option>請先搜尋路點</option>');
+		$("#wpse").selectmenu('refresh');
+		$("#wpse").selectmenu('disable');
+		$("#r1").off();
+		$("#rdmBtn").off();
+		
+						$("#run").addClass('ui-disabled');
+		 				$("#ftrr").html(""); 
+						$('#ftrl').html("");
+		 				tctr=0;
+		                s_flag=0;
+						clearInterval(timeoutId);
+			            clearInterval(timeoutId2);
+			            if(marker_rt!=null)
+					    {
+							marker_rt.setMap(null);
+							google.maps.event.trigger(map, "resize");
+						}
+			            $("#run").html('START');
+						
+						$("#run").off();
+						if(directionsDisplay!=null)
+						{
+							directionsDisplay.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						google.maps.event.clearListeners(map, "click");
+						for(p=0;p<markerArray.length;p++)
+						{
+							markerArray[p].setMap(null);
+							google.maps.event.trigger(map, "resize");
+						}
+						markerArray=[];
+						
+						killRPmarkers();
+		
+		
+      } else {
+        alert("Geocode was not successful for the following reason: " + status);
+      }
+    });
+});
+}
+
+function setB2()
+{
+	$("#b2").on( "click",function() {
+   var address = $("#end").val();
+   addr_e=address;
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        map.setCenter(results[0].geometry.location);
+		if(marker_e!=null)
+		{
+			marker_e.setMap(null);
+			google.maps.event.trigger(map,"resize");
+		}
+        marker_e = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+		ep=results[0].geometry.location;
+		
+		$("#selectList0").html('');
+		$("#wpse").off();
+		$("#crossBTN").off();
+        $("#wpse").html('<option>請先搜尋路點</option>');
+		$("#wpse").selectmenu('refresh');
+		$("#wpse").selectmenu('disable');
+		$("#r1").off();
+		$("#rdmBtn").off();
+		
+		                $("#run").addClass('ui-disabled');
+		 				$("#ftrr").html(""); 
+						$('#ftrl').html("");
+		 				tctr=0;
+		                s_flag=0;
+						clearInterval(timeoutId);
+			            clearInterval(timeoutId2);
+			            if(marker_rt!=null)
+					    {
+							marker_rt.setMap(null);
+							google.maps.event.trigger(map, "resize");
+						}
+			            $("#run").html('START');
+						
+						$("#run").off();
+						if(directionsDisplay!=null)
+						{
+							directionsDisplay.setMap(null);
+							google.maps.event.trigger(map,"resize");
+						}
+						google.maps.event.clearListeners(map, "click");
+						for(p=0;p<markerArray.length;p++)
+						{
+							markerArray[p].setMap(null);
+							google.maps.event.trigger(map, "resize");
+						}
+						markerArray=[];
+						
+						killRPmarkers();
+		
+		
+      } else {
+        alert("Geocode was not successful for the following reason: " + status);
+      }
+    });
+});
+}
+
+
+
+
+
+
 
 
 </script>

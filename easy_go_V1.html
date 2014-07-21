@@ -73,7 +73,7 @@ max-width: 100%;
 	<div data-role="content" style="height:33px;padding-top:0px;overflow:hidden;" id="hdr"> 
 		  <div  class="ui-grid-b">
             <div class="ui-block-a" style="padding-top:0px;" >
-              <a href="#popupBasic" data-rel="popup" id="m1"><img src="P2_3.png" id="menu1" width="45" height="45"></a>
+              <a href="#popupBasic" data-rel="popup" id="m1" data-position-to="window"><img src="P2_3.png" id="menu1" width="45" height="45"></a>
              
              <div style="float:right;padding-top:9px;padding-right:12px;">
 			 <a href="#" id="rdmBtn" align="right"><img src="P2_4.png" id="rdmIcon" width="35" height="29"></a>
@@ -205,69 +205,20 @@ var localLng=[];
 var addr_s;
 var addr_e;
 var markerArray=[];
+var stepDisplay;
 
 $( document ).on( "pageinit", "#page_1", function() {
 
-var logo_w=$("#lgo").css("width");
-var logo_h=$("#lgo").css("height");
-var go_w=$("#lgo_go").css("width");
-var go_h=$("#lgo_go").css("height");
-var his_w=$("#lgo_his").css("width");
-var his_h=$("#lgo_his").css("height");
-var set_w=$("#lgo_set").css("width");
-var set_h=$("#lgo_set").css("height");
-var txe0=window.innerHeight;
-var stepDisplay;
-
-var ee1=logo_w.split("p");
-logo_w=ee1[0];
-logo_w=parseInt(logo_w, 10) ;
-var ee2=logo_h.split("p");
-logo_h=ee2[0];
-logo_h=parseInt(logo_h, 10) ;
-var ee3=go_w.split("p");
-go_w=ee3[0];
-go_w=parseInt(go_w, 10) ;
-var ee4=go_h.split("p");
-go_h=ee4[0];
-go_h=parseInt(go_h, 10) ;
-var ee5=his_w.split("p");
-his_w=ee5[0];
-his_w=parseInt(his_w, 10) ;
-var ee6=his_h.split("p");
-his_h=ee6[0];
-his_h=parseInt(his_h, 10);
-var ee7=set_w.split("p");
-set_w=ee7[0];
-set_w=parseInt(set_w, 10) ;
-var ee8=set_h.split("p");
-set_h=ee8[0];
-set_h=parseInt(set_h, 10);
-
-var sum=logo_h+go_h+his_h+go_h+160;
-var per=txe0/sum;
-logo_w=logo_w*per;
-logo_h=logo_h*per;
-go_w=go_w*per;
-go_h=go_h*per;
-his_w=his_w*per;
-his_h=his_h*per;
-set_w=set_w*per;
-set_h=set_h*per;
-
-
-
-$("#lgo").css({"width":logo_w+"px"});
-$("#lgo").css({"height":logo_h+"px"});
-$("#lgo_go").css({"width":go_w+"px"});
-$("#lgo_go").css({"height":go_h+"px"});
-$("#lgo_his").css({"width":his_w+"px"});
-$("#lgo_his").css({"height":his_h+"px"});
-$("#lgo_set").css({"width":set_w+"px"});
-$("#lgo_set").css({"height":set_h+"px"});
+p1_resize();
 
 });
 
+$(window).resize(function() {
+  p1_resize();
+  var txe=window.innerHeight-98;
+  $("#map-canvas").css({"height":txe+"px"});
+  
+});
 
 $( document ).on( "pageinit", "#map-page", function() {
 	
@@ -984,6 +935,44 @@ function rng(minN,maxN)
       stepDisplay.open(map, markerr);
     });
   }
+  
+  function p1_resize()
+{
+var logo_w=353;
+var logo_h=66;
+var go_w=431;
+var go_h=383;
+var his_w=443;
+var his_h=95;
+var set_w=443;
+var set_h=96;
+var txe0=window.innerHeight;
+
+
+var sum=logo_h+go_h+his_h+go_h+160;
+var per=txe0/sum;
+logo_w=logo_w*per;
+logo_h=logo_h*per;
+go_w=go_w*per;
+go_h=go_h*per;
+his_w=his_w*per;
+his_h=his_h*per;
+set_w=set_w*per;
+set_h=set_h*per;
+
+
+
+$("#lgo").css({"width":logo_w+"px"});
+$("#lgo").css({"height":logo_h+"px"});
+$("#lgo_go").css({"width":go_w+"px"});
+$("#lgo_go").css({"height":go_h+"px"});
+$("#lgo_his").css({"width":his_w+"px"});
+$("#lgo_his").css({"height":his_h+"px"});
+$("#lgo_set").css({"width":set_w+"px"});
+$("#lgo_set").css({"height":set_h+"px"});
+
+	
+}
 
 
 </script>
